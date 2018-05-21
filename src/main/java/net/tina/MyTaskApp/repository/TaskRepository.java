@@ -1,5 +1,7 @@
 package net.tina.MyTaskApp.repository;
 import java.sql.Date;
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -11,6 +13,9 @@ import net.tina.MyTaskApp.entity.Task;
 @Repository
 public interface TaskRepository extends JpaRepository<Task, Integer>
 {
+	@Query(value = "SELECT * from task t WHERE t.id = :id", nativeQuery = true)
+	public List<Task> findTasksByUserId(@Param("id") int id);
+	
 	@Transactional
 	@Modifying(clearAutomatically = true)
     @Query(value = "UPDATE task t SET t.name = :name, "
