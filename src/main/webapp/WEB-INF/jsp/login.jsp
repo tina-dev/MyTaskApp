@@ -15,6 +15,14 @@
 				<div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-6 col-lg-offset-3">
 					<div id="login-box">
 						<h2>Welcome to Task Management App</h2>
+						<!-- <div class="alert alert-success">
+							<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+							This alert box could indicate a successful.
+						</div>
+						<div class="alert alert-danger">
+							<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+							This alert box could indicate a dangerous.
+						</div> -->
 						<ul class="nav nav-tabs">
 							<li class="active"><a data-toggle="tab" href="#signin">Sign in</a></li>
 							<li><a data-toggle="tab" href="#signup">Sign up</a></li>
@@ -70,6 +78,80 @@
 								</form>
 							</div>
 						</div>
+						<!-- testing create -->
+						<form role="form"  modelAttribute="task" method="POST" action="<c:url value='/task/createTask' />" accept-charset="UTF-8">
+							<div class="form-group">
+								<input type="text" name="name" placeholder="name" class="form-control">
+							</div>
+							<div class="form-group">
+								<input type="text" name="description" placeholder="description" class="form-control">
+							</div>
+							<div class="form-group">
+								<input type="text" name="assignedTimeBudget" placeholder="assignedTimeBudget" class="form-control">
+							</div>
+							<div class="form-group">
+								<input type="text" name="usedTimeBudget" placeholder="usedTimeBudget" class="form-control">
+							</div>
+							<div class="form-group">
+								<input type="text" name="state" placeholder="state" class="form-control">
+							</div>
+							<div class="form-group">
+								<input type="text" name="scheduledDate" placeholder="scheduledDate" class="form-control">
+							</div>
+							<div class="form-group">
+								<input type="text" name="completionDate" placeholder="completionDate" class="form-control">
+							</div>
+							<div class="form-group">
+								<input type="text" name="parentId" placeholder="parentId" class="form-control">
+							</div>
+							<div class="form-group">
+								<input type="text" name="milestoneId" placeholder="milestoneId" class="form-control">
+							</div>
+							<div class="form-group">
+								<input type="text" name="createdBy" placeholder="createdBy" class="form-control">
+							</div>
+							<div class="form-group">
+								<button type="submit" class="btn btn-default">Create</button>
+							</div>
+						</form>
+						<hr>
+						<!-- testing update -->
+						<form role="form"  modelAttribute="task" method="POST" action="<c:url value='/task/updateTask' />" accept-charset="UTF-8">
+							<input type="hidden" name="id" value="1" class="form-control">
+							<div class="form-group">
+								<input type="text" name="name" placeholder="name" class="form-control">
+							</div>
+							<div class="form-group">
+								<input type="text" name="description" placeholder="description" class="form-control">
+							</div>
+							<div class="form-group">
+								<input type="text" name="assignedTimeBudget" placeholder="assignedTimeBudget" class="form-control">
+							</div>
+							<div class="form-group">
+								<input type="text" name="usedTimeBudget" placeholder="usedTimeBudget" class="form-control">
+							</div>
+							<div class="form-group">
+								<input type="text" name="state" placeholder="state" class="form-control">
+							</div>
+							<div class="form-group">
+								<input type="text" name="scheduledDate" placeholder="scheduledDate" class="form-control">
+							</div>
+							<div class="form-group">
+								<input type="text" name="completionDate" placeholder="completionDate" class="form-control">
+							</div>
+							<div class="form-group">
+								<input type="text" name="parentId" placeholder="parentId" class="form-control">
+							</div>
+							<div class="form-group">
+								<input type="text" name="milestoneId" placeholder="milestoneId" class="form-control">
+							</div>
+							<div class="form-group">
+								<input type="text" name="createdBy" placeholder="createdBy" class="form-control">
+							</div>
+							<div class="form-group">
+								<button type="submit" class="btn btn-default">Update</button>
+							</div>
+						</form>
 					</div>
 				</div>
 			</div>
