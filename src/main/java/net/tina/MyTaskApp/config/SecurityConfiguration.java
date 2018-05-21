@@ -1,5 +1,4 @@
 package net.tina.MyTaskApp.config;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
@@ -36,7 +35,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter
         http.authorizeRequests()
         		.antMatchers("/admin/**").authenticated()
                 .antMatchers("/welcome/**").authenticated()
-                .antMatchers("/task/**").authenticated()
+                //.antMatchers("/task/**").authenticated()
                 .anyRequest().permitAll()
                 .and()
                 .formLogin()
