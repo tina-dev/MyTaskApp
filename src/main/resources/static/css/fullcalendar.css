@@ -333,17 +333,20 @@ html .fc,
 	font-size: 12px;
 	cursor: default;
 }
-.fc-event.chill{
-    background-color: #f3dcf8;
+.fc-event.open{
+    background-color: #FFFF99;
 }
-.fc-event.info{
-    background-color: #c6ebfe;
+.fc-event.planned{
+    background-color: #66CCFF;
 }
-.fc-event.important{
+.fc-event.completed{
     background-color: #FFBEBE;
 }
-.fc-event.success{
+.fc-event.running{
     background-color: #BEFFBF;
+}
+.fc-event.abandoned{
+    background-color: #9370DB;
 }
 .fc-event:hover{
     opacity: 0.7;

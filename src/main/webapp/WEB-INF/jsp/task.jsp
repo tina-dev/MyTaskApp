@@ -7,6 +7,8 @@
 	<title>Task Management App</title>
 	<link href='css/fullcalendar.css' rel='stylesheet' />
 	<link href='css/fullcalendar.print.css' rel='stylesheet' media='print' />
+	<link href='css/jquery-ui.min.css' rel='stylesheet' />
+	<link href='css/jquery-ui.theme.min.css' rel='stylesheet' />
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   	
 	<script src='js/jquery/jquery-1.10.2.js'></script>
@@ -21,6 +23,24 @@
 		var d = date.getDate();
 		var m = date.getMonth();
 		var y = date.getFullYear();
+		
+		$.ajax({
+            type: "GET",
+            url: "<c:url value='/task/getAllTasks' />", //this is my servlet
+            success: function(data){ 
+            	var source =[];
+            	$(data).each(function (e, v) { 
+                    source.push({
+                    	title: v.name,
+    					start: v.scheduledDate,
+    					end: v.completionDate,
+    					allDay: true,
+    					className: v.state
+                    });
+                  });
+            	generateCalendar(source)
+            }
+       	});
 		
 		/*  className colors
 		
@@ -56,126 +76,85 @@
 		/* initialize the calendar
 		-----------------------------------------------------------------*/
 		
-		var calendar =  $('#calendar').fullCalendar({
-			header: {
-				left: 'title',
-				center: 'agendaDay,agendaWeek,month',
-				right: 'prev,next today'
-			},
-			editable: true,
-			firstDay: 1, //  1(Monday) this can be changed to 0(Sunday) for the USA system
-			selectable: true,
-			defaultView: 'month',
-			
-			axisFormat: 'h:mm',
-			columnFormat: {
-                month: 'ddd',    // Mon
-                week: 'ddd d', // Mon 7
-                day: 'dddd M/d',  // Monday 9/7
-                agendaDay: 'dddd d'
-            },
-            titleFormat: {
-                month: 'MMMM yyyy', // September 2009
-                week: "MMMM yyyy", // September 2009
-                day: 'MMMM yyyy'                  // Tuesday, Sep 8, 2009
-            },
-			allDaySlot: false,
-			selectHelper: true,
-			select: function(start, end, allDay) {
-				var title = prompt('Event Title:');
-				if (title) {
-					calendar.fullCalendar('renderEvent',
-						{
-							title: title,
-							start: start,
-							end: end,
-							allDay: allDay
-						},
-						true // make the event "stick"
-					);
-				}
-				calendar.fullCalendar('unselect');
-			},
-			droppable: true, // this allows things to be dropped onto the calendar !!!
-			drop: function(date, allDay) { // this function is called when something is dropped
-			
-				// retrieve the dropped element's stored Event Object
-				var originalEventObject = $(this).data('eventObject');
+		function generateCalendar(dataSource){
+			var calendar =  $('#calendar').fullCalendar({
+				header: {
+					left: 'title',
+					center: 'agendaDay,agendaWeek,month',
+					right: 'prev,next today'
+				},
+				editable: true,
+				firstDay: 1, //  1(Monday) this can be changed to 0(Sunday) for the USA system
+				selectable: true,
+				defaultView: 'month',
 				
-				// we need to copy it, so that multiple events don't have a reference to the same object
-				var copiedEventObject = $.extend({}, originalEventObject);
+				axisFormat: 'h:mm',
+				columnFormat: {
+	                month: 'ddd',    // Mon
+	                week: 'ddd d', // Mon 7
+	                day: 'dddd M/d',  // Monday 9/7
+	                agendaDay: 'dddd d'
+	            },
+	            titleFormat: {
+	                month: 'MMMM yyyy', // September 2009
+	                week: "MMMM yyyy", // September 2009
+	                day: 'MMMM yyyy'                  // Tuesday, Sep 8, 2009
+	            },
+				allDaySlot: false,
+				selectHelper: true,
+				select: function(start, end, allDay) {
+					$( function() {
+					    $( "#dialog" ).dialog();
+					  } );
+					
+					
+					if (title) {
+						calendar.fullCalendar('renderEvent',
+							{
+								title: title,
+								start: start,
+								end: end,
+								allDay: allDay
+							},
+							true // make the event "stick"
+						);
+					}
+					calendar.fullCalendar('unselect');
+				},
+				droppable: true, // this allows things to be dropped onto the calendar !!!
+				drop: function(date, allDay) { // this function is called when something is dropped
 				
-				// assign it the date that was reported
-				copiedEventObject.start = date;
-				copiedEventObject.allDay = allDay;
+					// retrieve the dropped element's stored Event Object
+					var originalEventObject = $(this).data('eventObject');
+					
+					// we need to copy it, so that multiple events don't have a reference to the same object
+					var copiedEventObject = $.extend({}, originalEventObject);
+					
+					// assign it the date that was reported
+					copiedEventObject.start = date;
+					copiedEventObject.allDay = allDay;
+					
+					// render the event on the calendar
+					// the last `true` argument determines if the event "sticks" (http://arshaw.com/fullcalendar/docs/event_rendering/renderEvent/)
+					$('#calendar').fullCalendar('renderEvent', copiedEventObject, true);
+					
+					// is the "remove after drop" checkbox checked?
+					if ($('#drop-remove').is(':checked')) {
+						// if so, remove the element from the "Draggable Events" list
+						$(this).remove();
+					}
+					
+				},
 				
-				// render the event on the calendar
-				// the last `true` argument determines if the event "sticks" (http://arshaw.com/fullcalendar/docs/event_rendering/renderEvent/)
-				$('#calendar').fullCalendar('renderEvent', copiedEventObject, true);
-				
-				// is the "remove after drop" checkbox checked?
-				if ($('#drop-remove').is(':checked')) {
-					// if so, remove the element from the "Draggable Events" list
-					$(this).remove();
-				}
-				
-			},
-			
-			events: [
-				{
-					title: 'All Day Event',
-					start: new Date(y, m, 1)
-				},
-				{
-					id: 999,
-					title: 'Repeating Event',
-					start: new Date(y, m, d-3, 16, 0),
-					allDay: false,
-					className: 'info'
-				},
-				{
-					id: 999,
-					title: 'Repeating Event',
-					start: new Date(y, m, d+4, 16, 0),
-					allDay: false,
-					className: 'info'
-				},
-				{
-					title: 'Meeting',
-					start: new Date(y, m, d, 10, 30),
-					allDay: false,
-					className: 'important'
-				},
-				{
-					title: 'Lunch',
-					start: new Date(y, m, d, 12, 0),
-					end: new Date(y, m, d, 14, 0),
-					allDay: false,
-					className: 'important'
-				},
-				{
-					title: 'Birthday Party',
-					start: new Date(y, m, d+1, 19, 0),
-					end: new Date(y, m, d+1, 22, 30),
-					allDay: false,
-				},
-				{
-					title: 'Click for Google',
-					start: new Date(y, m, 28),
-					end: new Date(y, m, 29),
-					url: 'http://google.com/',
-					className: 'success'
-				}
-			],			
-		});
-		
-		
+				events: dataSource,			
+			});
+		}
 	});
 
 </script>
 	</head>
 	<body>
-	<nav class="navbar navbar-inverse">
+		<nav class="navbar navbar-inverse">
 		  <div class="container-fluid">
 		    <div class="navbar-header">
 		      <a class="navbar-brand" href="#">Time Management</a>
@@ -187,16 +166,14 @@
 		    </ul>
 		    <ul class="nav navbar-nav navbar-right">
 		    	<li><a href="#"><span class="glyphicon glyphicon-user"></span> Name Surname </a></li>
-		      	<li>
+				<li>
 		      		<form role="Form" method="POST" action="<c:url value='/logout' />" accept-charset="UTF-8">
 		      			<a href="#"><span class="glyphicon glyphicon-log-in"></span> Logout</a>
-     				</form>
-     			</li>
+	    			</form>
+	    		</li>
 		    </ul>
 		  </div>
 		</nav>
-		<div class="row">
-			<div id='calendar'></div>
-		</div>
+		<div id='calendar'></div>
 	</body>
 </html>
