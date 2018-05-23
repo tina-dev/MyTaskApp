@@ -333,7 +333,7 @@ html .fc,
 	font-size: 12px;
 	cursor: default;
 }
-.fc-event.open{
+.fc-event.opened{
     background-color: #FFFF99;
 }
 .fc-event.planned{

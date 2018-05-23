@@ -3,6 +3,7 @@ package net.tina.MyTaskApp.controller;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +41,7 @@ public class TaskRestController
     }
 	
 	@RequestMapping(value = "/createTask", method = RequestMethod.POST)
-    String createTask(@Valid @ModelAttribute("task") Task task, BindingResult result, ModelMap model, Authentication authentication)
+    void createTask(@Valid @ModelAttribute("task") Task task, BindingResult result, ModelMap model, Authentication authentication,HttpServletResponse httpServletResponse)
 	{
         //if (result.hasErrors()) return "Error";
 		
@@ -51,16 +52,21 @@ public class TaskRestController
 		}
         
 		Task createdTask = taskService.createTask(task);
+		if(createdTask != null)
+			httpServletResponse.setStatus(httpServletResponse.SC_MOVED_TEMPORARILY);
+			httpServletResponse.setHeader("Location", "/MyTaskApp/task");
 		
-        return createdTask != null ? "Success" : "Error";
-    }
+        }
 	
 	@RequestMapping(value = "/updateTask", method = RequestMethod.POST)
-	public String updateTask(@Valid @ModelAttribute("task") Task task, BindingResult result, ModelMap model)
+	public void updateTask(@Valid @ModelAttribute("task") Task task, BindingResult result, ModelMap model, HttpServletResponse httpServletResponse)
 	{
 		int updateResult = taskService.updateTask(task);
 		
-		return updateResult == 1 ? "Success" : "Error";
+		if(updateResult == 1)
+			httpServletResponse.setStatus(httpServletResponse.SC_MOVED_TEMPORARILY);
+			httpServletResponse.setHeader("Location", "/MyTaskApp/task");
+		
     }
 	
 	@RequestMapping(value = "/deleteTask/{id}", method = RequestMethod.GET)

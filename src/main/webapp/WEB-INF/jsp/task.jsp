@@ -9,6 +9,7 @@
 	<link href='css/fullcalendar.print.css' rel='stylesheet' media='print' />
 	<link href='css/jquery-ui.min.css' rel='stylesheet' />
 	<link href='css/jquery-ui.theme.min.css' rel='stylesheet' />
+	<link href='css/style.css' rel='stylesheet'/>
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   	
 	<script src='js/jquery/jquery-1.10.2.js'></script>
@@ -16,6 +17,10 @@
   	<script src='js/jquery/jquery-ui.custom.min.js'></script>
 	
 	<script src='js/fullcalendar.js'></script>
+	
+
+	
+	
 	<script>
 
 	$(document).ready(function() {
@@ -23,6 +28,7 @@
 		var d = date.getDate();
 		var m = date.getMonth();
 		var y = date.getFullYear();
+		
 		
 		$.ajax({
             type: "GET",
@@ -35,18 +41,54 @@
     					start: v.scheduledDate,
     					end: v.completionDate,
     					allDay: true,
-    					className: v.state
+    					className: v.state,
+    					id: v.id
                     });
                   });
             	generateCalendar(source)
             }
        	});
 		
+		$.ajax({
+            type: "GET",
+            url: "<c:url value='/task/getAllMilestones' />", //this is my servlet
+            success: function(data){
+            	$.each(data, function(key, value) {   
+            	     $('#milestoneId')
+            	         .append($("<option></option>")
+            	                    .attr("value",value.id)
+            	                    .text(value.name)); 
+            	});
+            }
+       	});
+		
+		/* $(document).on('submit', '#task_form', function(){
+			
+			$.ajax({
+	            type: "GET",
+	            url: "<c:url value='/task/updateTask' />", //this is my servlet
+	            data: 
+	            success: function(data){ 
+	            	var source =[];
+	            	$(data).each(function (e, v) { 
+	                    source.push({
+	                    	title: v.name,
+	    					start: v.scheduledDate,
+	    					end: v.completionDate,
+	    					allDay: true,
+	    					className: v.state,
+	    					id: v.id
+	                    });
+	                  });
+	            	generateCalendar(source)
+	            }
+	       	});
+		}) */
 		/*  className colors
 		
 		className: default(transparent), important(red), chill(pink), success(green), info(blue)
 		
-		*/		
+			
 		
 		  
 		/* initialize the external events
@@ -104,11 +146,14 @@
 				selectHelper: true,
 				select: function(start, end, allDay) {
 					$( function() {
-					    $( "#dialog" ).dialog();
+						$('#task_form')[0].reset();
+						$('#task_form :input').prop('readonly', false);
+						$('#task_form').attr('action', "<c:url value='/task/createTask' />");
+					    $( "#dialog" ).dialog({width :'638.4px'});
 					  } );
 					
 					
-					if (title) {
+					/* if (title) {
 						calendar.fullCalendar('renderEvent',
 							{
 								title: title,
@@ -118,9 +163,35 @@
 							},
 							true // make the event "stick"
 						);
-					}
+					} */
 					calendar.fullCalendar('unselect');
 				},
+				eventClick: function(calEvent, jsEvent, view) {
+
+					$.ajax({
+			            type: "GET",
+			            url: "<c:url value='/task/getAllTasks' />", //this is my servlet
+			            data: { id: calEvent.id },
+			            success: function(data){ 
+			            	$('#task_form input[name="id"]').val(data[0].id);
+			            	$('#task_form input[name="name"]').val(data[0].name);
+			            	$('#task_form textarea[name="description"]').val(data[0].description);
+			            	$('#task_form select[name="state"]').val(data[0].state);
+			            	$('#task_form input[name="assignedTimeBudget"]').val(data[0].assignedTimeBudget);
+			            	$('#task_form input[name="usedTimeBudget"]').val(data[0].usedTimeBudget);
+			            	$('#task_form input[name="scheduledDate"]').val(data[0].scheduledDate);
+			            	$('#task_form input[name="completionDate"]').val(data[0].completionDate);
+			            	$('#task_form select[name="milestoneId"]').val(data[0].milestoneId);
+			            	$( function() {
+							    $( "#dialog" ).dialog({width :'638.4px'});
+							  } );
+			            }
+			       	});
+					
+				    // change the border color just for fun
+				    $(this).css('border-color', 'red');
+
+				  },
 				droppable: true, // this allows things to be dropped onto the calendar !!!
 				drop: function(date, allDay) { // this function is called when something is dropped
 				
@@ -148,7 +219,31 @@
 				
 				events: dataSource,			
 			});
+			
+			$(document).on('click', '#delete_btn', function(){
+				
+				if (confirm("Are you sure you want to delete this task?")) {
+					
+					var taskId = $('#task_form').find('input[name="id"]').val();
+					$.ajax({
+			            type: "GET",
+			            url: "<c:url value='/task/deleteTask/"+ taskId +"' />",
+			            success: function(){ 
+			            	calendar.fullCalendar('', taskId);
+			            }
+			       	});	
+				}
+			});
+			
+			$(document).on('click', '#edit_btn', function(){
+									
+				$('#task_form :input').prop('readonly', false);
+					
+			}) 
 		}
+		
+		
+		
 	});
 
 </script>
@@ -161,19 +256,105 @@
 		    </div>
 		    <ul class="nav navbar-nav">
 		      <li class="active"><a href="#">MyCalendar</a></li>
-		      <li><a href="#">My Tasks</a></li>
-		      <li><a href="#">Page 2</a></li>
-		    </ul>
+		     </ul>
 		    <ul class="nav navbar-nav navbar-right">
-		    	<li><a href="#"><span class="glyphicon glyphicon-user"></span> Name Surname </a></li>
-				<li>
+		    	<li><a href="#"><span class="glyphicon glyphicon-user"></span> Name Surname </a>
 		      		<form role="Form" method="POST" action="<c:url value='/logout' />" accept-charset="UTF-8">
-		      			<a href="#"><span class="glyphicon glyphicon-log-in"></span> Logout</a>
+		      			<li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
 	    			</form>
+	    			
 	    		</li>
 		    </ul>
+	   
 		  </div>
 		</nav>
+		
 		<div id='calendar'></div>
-	</body>
+
+	<div id="dialog" title="Task Management Dialog" style="display: none; width: 632px" class="form-group">
+
+		<div class="container">
+			<div class="col-sm-6">
+				<form id="task_form" action="<c:url value='/task/updateTask' />"
+					method="POST">
+					<div class="form-group">
+						<label for="task">Task</label> <input type="hidden"
+							class="form-control" id="id" name="id"> <input
+							type="text" class="form-control" id="task" name="name" readonly>
+					</div>
+					<div class="form-group">
+						<label for="description">Description</label>
+						<textarea class="form-control" id="description" rows="3"
+							name="description" readonly></textarea>
+					</div>
+					<div class="form-group">
+						<label for="state">State</label> <select class="form-control"
+							size="5" id="state" name="state" readonly>
+							<option value="planned">PLANNED</option>
+							<option value="opened">OPENED</option>
+							<option value="running">RUNNING</option>
+							<option value="completed">COMPLETED</option>
+							<option value="abandoned">ABANDONED</option>
+						</select>
+					</div>
+					<div class="form-group row">
+						<div class="col-xs-6">
+							<label for="Assigned Time Budget">Assigned Time Budget</label> <input
+								class="form-control" id="ex1" width="250" type="text"
+								name="assignedTimeBudget" readonly>
+						</div>
+						<div class="col-xs-6">
+							<label for="Used Time Budget">Used Time Budget</label> <input
+								class="form-control" id="ex3" width="250" type="text"
+								name="usedTimeBudget" readonly>
+						</div>
+					</div>
+					<div class="form-group row">
+						<div class="col-xs-6">
+							<label for="Scheduled Date">Scheduled Date</label> <input
+								id="datepicker" width="250" name="scheduledDate" readonly />
+							<script type="text/javascript">
+					       		$(function() {
+					               $("#datepicker").datepicker({ dateFormat: "yy-mm-dd" }).val()
+					       		});
+					   		</script>
+						</div>
+						<div class="col-xs-6">
+							<label for="Completion Date">Completion Date</label> <input
+								id="datepicker1" width="250" name="completionDate" readonly />
+							<script type="text/javascript">
+					       		$(function() {
+					               $("#datepicker1").datepicker({ dateFormat: "yy-mm-dd" }).val()
+					       		});
+					   		</script>
+						</div>
+					</div>
+					<div>
+						<label for="state">Milestone</label> <select id="milestoneId" class="form-control"
+							size="5" name="milestoneId" readonly>
+						</select>
+					</div>
+
+					<div style="margin-top: 5px">
+						<div class="btn-group">
+							<button type="button" class="btn btn-lg" id="edit_btn">Edit</button>
+						</div>
+						<div class="btn-group">
+							<button type="button" class="btn btn-lg" id="cancel_btn">Cancel</button>
+						</div>
+						<div class="btn-group">
+							<button type="button" class="btn btn-lg" id="delete_btn">Delete</button>
+						</div>
+						<div class="btn-group">
+							<button type="submit" class="btn btn-primary btn-lg"
+								id="save_btn">Save</button>
+						</div>
+					</div>
+
+				</form>
+			</div>
+		</div>
+	</div>
+
+</body>
 </html>
