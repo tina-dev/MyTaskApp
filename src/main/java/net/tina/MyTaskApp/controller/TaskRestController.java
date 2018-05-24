@@ -119,14 +119,14 @@ public class TaskRestController
     }
 	
 	@RequestMapping(value = "/getStates", method = RequestMethod.GET)
-    Map<Integer, String> getStates(ModelMap model)
+    Map<String, String> getStates(ModelMap model)
 	{
-		Map<Integer, String> states = new HashMap<Integer, String>();
-		states.put(1, "PLANNED");
-		states.put(2, "OPEN");
-		states.put(3, "RUNNING");
-		states.put(4, "COMPLETED");
-		states.put(5, "ABONDONED");
+		Map<String, String> states = new HashMap<String, String>();
+		states.put("planned", "PLANNED");
+		states.put("opened", "OPEN");
+		states.put("running", "RUNNING");
+		states.put("completed", "COMPLETED");
+		states.put("abandoned", "ABONDONED");
 		
 		return states;
     }
