@@ -62,31 +62,10 @@
             }
        	});
 		
-		/* $(document).on('submit', '#task_form', function(){
-			
-			$.ajax({
-	            type: "GET",
-	            url: "<c:url value='/task/updateTask' />", //this is my servlet
-	            data: 
-	            success: function(data){ 
-	            	var source =[];
-	            	$(data).each(function (e, v) { 
-	                    source.push({
-	                    	title: v.name,
-	    					start: v.scheduledDate,
-	    					end: v.completionDate,
-	    					allDay: true,
-	    					className: v.state,
-	    					id: v.id
-	                    });
-	                  });
-	            	generateCalendar(source)
-	            }
-	       	});
-		}) */
+
 		/*  className colors
 		
-		className: default(transparent), important(red), chill(pink), success(green), info(blue)
+		className: abandoned(purple), completed(red), opened(yellow), running(green), planned(blue)
 		
 			
 		
@@ -152,19 +131,7 @@
 					    $( "#dialog" ).dialog({width :'638.4px'});
 					  } );
 					
-					
-					/* if (title) {
-						calendar.fullCalendar('renderEvent',
-							{
-								title: title,
-								start: start,
-								end: end,
-								allDay: allDay
-							},
-							true // make the event "stick"
-						);
-					} */
-					calendar.fullCalendar('unselect');
+				calendar.fullCalendar('unselect');
 				},
 				eventClick: function(calEvent, jsEvent, view) {
 
@@ -216,22 +183,6 @@
 					}
 					
 				},
-				
-				/* eventRender: function(event, element, view) {
-			        element.find("#delete_btn").on('click', function() {
-			        	if (confirm("Are you sure you want to delete this task?")) {
-							
-							var taskId = $('#task_form').find('input[name="id"]').val();
-							$.ajax({
-					            type: "GET",
-					            url: "<c:url value='/task/deleteTask/"+ taskId +"' />",
-					            success: function(){ 
-						            $('#calendar').fullCalendar('removeEvents',event._id);
-					            }
-					       	});	
-						}
-		            });
-			    }, */
 				events: dataSource,			
 			});
 			
@@ -280,11 +231,10 @@
 		      <li class="active"><a href="#">MyCalendar</a></li>
 		     </ul>
 		    <ul class="nav navbar-nav navbar-right">
-		    	<li><a href="#"><span class="glyphicon glyphicon-user"></span> Name Surname </a>
+		    	<li><a href="#"><span class="active glyphicon glyphicon-user"></span> Name Surname </a>
 		      		<form role="Form" method="POST" action="<c:url value='/logout' />" accept-charset="UTF-8">
-		      			<li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
+		      			<li><button type="submit" class="btn btn-default">Logout</button></li>
 	    			</form>
-	    			
 	    		</li>
 		    </ul>
 	   

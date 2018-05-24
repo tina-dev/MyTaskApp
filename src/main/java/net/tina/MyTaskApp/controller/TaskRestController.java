@@ -1,6 +1,8 @@
 package net.tina.MyTaskApp.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -40,6 +42,8 @@ public class TaskRestController
 		return taskService.getAllTasks();
     }
 	
+
+	@SuppressWarnings("static-access")
 	@RequestMapping(value = "/createTask", method = RequestMethod.POST)
     void createTask(@Valid @ModelAttribute("task") Task task, BindingResult result, ModelMap model, Authentication authentication,HttpServletResponse httpServletResponse)
 	{
@@ -58,6 +62,7 @@ public class TaskRestController
 		
         }
 	
+	@SuppressWarnings("static-access")
 	@RequestMapping(value = "/updateTask", method = RequestMethod.POST)
 	public void updateTask(@Valid @ModelAttribute("task") Task task, BindingResult result, ModelMap model, HttpServletResponse httpServletResponse)
 	{
@@ -92,67 +97,18 @@ public class TaskRestController
 		return taskService.getAllMilestones();
     }
 	
-	@RequestMapping(value = "/createMilestone", method = RequestMethod.POST)
-    String createMilestone(@Valid @ModelAttribute("milestone") Milestone milestone, BindingResult result, ModelMap model)
-	{
-		Milestone createdMilestone = taskService.createMilestone(milestone);
-		
-        return createdMilestone != null ? "Success" : "Error";
-    }
-	
-	@RequestMapping(value = "/updateMilestone", method = RequestMethod.POST)
-	public String updateMilestone(@Valid @ModelAttribute("milestone") Milestone milestone, BindingResult result, ModelMap model)
-	{
-		int updateResult = taskService.updateMilestone(milestone);
-		
-		return updateResult == 1 ? "Success" : "Error";
-    }
-	
-	@RequestMapping(value = "/deleteMilestone/{id}", method = RequestMethod.GET)
-	public String deleteMilestone(@PathVariable("id") int id, ModelMap model)
-	{
-		try
-		{
-			taskService.deleteMilestone(id);
-		}
-		catch(Exception e)
-		{
-			return "Error";
-		}
-		
-		return "Success";
-    }
-	
-	// Controllers for task user ------------------------------------------------------------------------------------------------
-	
 	@RequestMapping(value = "/getAllTaskUsers", method = RequestMethod.GET)
     List<TaskUser> getAllTaskUsers(ModelMap model)
 	{
 		return taskService.getAllTaskUsers();
     }
 	
-	@RequestMapping(value = "/createTaskUser", method = RequestMethod.POST)
-    String createTaskUser(@Valid @ModelAttribute("taskuser") TaskUser taskUser, BindingResult result, ModelMap model)
-	{
-		TaskUser createdTaskUser = taskService.createTaskUser(taskUser);
-		
-        return createdTaskUser != null ? "Success" : "Error";
-    }
-	
-	@RequestMapping(value = "/updateTaskUser", method = RequestMethod.POST)
-	public String updateTaskUser(@Valid @ModelAttribute("taskuser") TaskUser taskUser, BindingResult result, ModelMap model)
-	{
-		int updateResult = taskService.updateTaskUser(taskUser);
-		
-		return updateResult == 1 ? "Success" : "Error";
-    }
-	
-	@RequestMapping(value = "/deleteTaskUser/{id}", method = RequestMethod.GET)
+	@RequestMapping(value = "/admin/deleteTaskUser/{id}", method = RequestMethod.GET)
 	public String deleteTaskUser(@PathVariable("id") int id, ModelMap model)
 	{
 		try
 		{
-			taskService.deleteTaskUser(id);;
+			taskService.deleteTaskUser(id);
 		}
 		catch(Exception e)
 		{
@@ -160,5 +116,18 @@ public class TaskRestController
 		}
 		
 		return "Success";
+    }
+	
+	@RequestMapping(value = "/getStates", method = RequestMethod.GET)
+    Map<Integer, String> getStates(ModelMap model)
+	{
+		Map<Integer, String> states = new HashMap<Integer, String>();
+		states.put(1, "PLANNED");
+		states.put(2, "OPEN");
+		states.put(3, "RUNNING");
+		states.put(4, "COMPLETED");
+		states.put(5, "ABONDONED");
+		
+		return states;
     }
 }
