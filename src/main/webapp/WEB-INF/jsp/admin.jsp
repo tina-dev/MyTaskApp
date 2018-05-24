@@ -4,9 +4,12 @@
 <html>
 	<head>
 		<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css"/>
+		<!-- <link href="css/bootstrap-treeview.css" rel="stylesheet"/> -->
 		<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
 		<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-treeview/1.2.0/bootstrap-treeview.min.js"></script>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
+		<script src="js/bootstrap-treeview.min.js"></script>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 		<title>Admin page</title>
 	</head>
@@ -68,18 +71,13 @@
 									  			<span for="ex1">Scheduled Completion</span>
 									  			<input id="scheduledDate" width="200" class="form-control" name="scheduledDate"/>
 							    				<script>
-											        $('#scheduledDate').datepicker({
-											            uiLibrary: 'bootstrap'
-											        });
+											        
 											    </script>
 								  			</div>
 								  			<div class="col-xs-5">
 									  			<span for="ex2">Completion Achieved</span>
 									  			<input id="completionDate" width="200" class="form-control" name="completionDate"/>
-							    				<script>
-											        $('#completionDate').datepicker({
-											            uiLibrary: 'bootstrap'
-											        });
+							    				<script> 
 											    </script>
 								  			</div>
 								  		</div>
@@ -132,8 +130,31 @@
 		
 		$(document).ready(function()
 		{
+			$('#scheduledDate').datepicker({
+	            format: 'yyyy-mm-dd'
+	        }); 
+
+	         $('#completionDate').datepicker({
+	            format: 'yyyy-mm-dd'
+	        });
+	         
 			disableForm(true);
 			tasklist = ${tasks};
+			
+			var initSelectableTree = function() {
+		          return $('#treeview').treeview({
+		            data: unflatten(tasklist),
+		            onNodeSelected: function(event, node) {
+		            	setTask(node.id);
+		    			disableForm(false);
+		            },
+		            onNodeUnselected: function (event, node) {
+		            	clearForm();
+		    			disableForm(false);
+		            }
+		          });
+		        };
+		        var $selectableTree = initSelectableTree();
 		});
 		
 		function newBtnClick()
@@ -167,6 +188,7 @@
 		
 		function clearForm()
 		{
+			document.getElementById('id').value = "";
 			document.getElementById('name').value = "";
 			document.getElementById('description').value = "";
 			document.getElementById("state").selectedIndex = "-1";
@@ -204,105 +226,48 @@
 					document.getElementById("state").selectedIndex = task.state;
 					document.getElementById('assignedTimeBudget').value = task.assignedTimeBudget;
 					document.getElementById('usedTimeBudget').value = task.usedTimeBudget;
-					document.getElementById('scheduledDate').value = task.scheduledDate;
-					document.getElementById('completionDate').value = task.completionDate;
 					document.getElementById("milestoneId").selectedIndex = task.milestoneId;
 					document.getElementById("parentId").selectedIndex = task.parentId;
+					if(task.scheduledDate){
+						var scheduledDate = new Date(task.scheduledDate);
+						document.getElementById('scheduledDate').value = 
+							scheduledDate.getFullYear() + '-' + (scheduledDate.getMonth() + 1) + '-' + scheduledDate.getDate()
+					}
+					if(task.completionDate){
+						var completionDate = new Date(task.completionDate);
+						document.getElementById('completionDate').value = 
+							completionDate.getFullYear() + '-' + (completionDate.getMonth() + 1) + '-' + completionDate.getDate()
+					}
 				}
 			}
 		};
 		
-		</script>
-	<script type="text/javascript">
-		$(function() {
-    var treeData = [
-      {
-        text: 'P: Prepare Lecture',
-        href: '#menu1',
-        nodes: [
-          {
-            text: 'C: Prepare Slides',
-            href: '#submenu1',
-            tags: ['2'],
-            nodes: [
-              {
-                text: 'S: Select Existing Slides',
-                href: '#submenu1.1',
-                tags: ['0']
-              },
-              {
-                text: 'S: Translate Selected Eixsting Slides',
-                href: '#submenu1.2',
-                tags: ['0']
-              },
-              {
-                text: 'S: Create New Slides',
-                href: '#submenu1.2',
-                tags: ['0']
-              }
-            ]
-          },
-          {
-            text: 'C: Prepare Example Code',
-            href: '#submenu2',
-            tags: ['2'],
-            nodes:
-            [
-            	{
-            		text: 'C: Monolothic Example',
-                	href: '#submenu1.1',
-                	tags: ['0'],
-                	nodes:
-                	[
-                		{
-                			text: 'S: Program Monolothic Examples',
-            				href: '#submenu2',
-            				tags: ['2']
-                		},
-                		{
-                			text: 'S: Test Monolothic Examples',
-            				href: '#submenu2',
-            				tags: ['2']
-                		}
-                	]
-            	},
-            	{
-                	text: 'S: Simple Examples',
-            		href: '#submenu2',
-            		tags: ['2']
-                },
-                {
-            		text: 'C: Microservice Example',
-                	href: '#submenu1.1',
-                	tags: ['0'],
-                	nodes:
-                	[
-                		{
-                			text: 'S: Install Docker',
-            				href: '#submenu2',
-            				tags: ['2']
-                		},
-                		{
-                			text: 'S: Refactor Monolothic Examples',
-            				href: '#submenu2',
-            				tags: ['2']
-                		},
-                		{
-                			text: 'S: Test MMicroservice Examples',
-            				href: '#submenu2',
-            				tags: ['2']
-                		}
-                	]
-            	}
-            ]
-          }
-        ]
-      }
-    ];
-    $('#treeview').treeview({
-      data: treeData,
-    });
-	})
+		function unflatten(arr){
+			var tree = [],
+			mappedArr = [],
+			arrElem,
+			mappedElem;
+			
+			for(var i= 0; i<arr.length; i++){
+				arrElem = arr[i];
+				delete arrElem.state;
+				mappedArr[arrElem.id] = arrElem;
+			}
+			
+			for(var id in mappedArr){
+				if(mappedArr.hasOwnProperty(id)){
+					mappedElem = mappedArr[id];
+					if(mappedElem.parentId){
+						mappedArr[mappedElem['parentId']]['nodes'] = [];
+						mappedArr[mappedElem['parentId']]['nodes'].push(mappedElem)
+					}
+					else{
+						tree.push(mappedElem);
+					}
+				}
+			}
+			return tree;
+		}
 	</script>
 	</body>
 </html>
