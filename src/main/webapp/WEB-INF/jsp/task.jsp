@@ -62,31 +62,10 @@
             }
        	});
 		
-		/* $(document).on('submit', '#task_form', function(){
-			
-			$.ajax({
-	            type: "GET",
-	            url: "<c:url value='/task/updateTask' />", //this is my servlet
-	            data: 
-	            success: function(data){ 
-	            	var source =[];
-	            	$(data).each(function (e, v) { 
-	                    source.push({
-	                    	title: v.name,
-	    					start: v.scheduledDate,
-	    					end: v.completionDate,
-	    					allDay: true,
-	    					className: v.state,
-	    					id: v.id
-	                    });
-	                  });
-	            	generateCalendar(source)
-	            }
-	       	});
-		}) */
+
 		/*  className colors
 		
-		className: default(transparent), important(red), chill(pink), success(green), info(blue)
+		className: abandoned(purple), completed(red), opened(yellow), running(green), planned(blue)
 		
 			
 		
@@ -152,19 +131,7 @@
 					    $( "#dialog" ).dialog({width :'638.4px'});
 					  } );
 					
-					
-					/* if (title) {
-						calendar.fullCalendar('renderEvent',
-							{
-								title: title,
-								start: start,
-								end: end,
-								allDay: allDay
-							},
-							true // make the event "stick"
-						);
-					} */
-					calendar.fullCalendar('unselect');
+				calendar.fullCalendar('unselect');
 				},
 				eventClick: function(calEvent, jsEvent, view) {
 
@@ -216,7 +183,6 @@
 					}
 					
 				},
-				
 				events: dataSource,			
 			});
 			
@@ -229,7 +195,8 @@
 			            type: "GET",
 			            url: "<c:url value='/task/deleteTask/"+ taskId +"' />",
 			            success: function(){ 
-			            	calendar.fullCalendar('', taskId);
+			            	$('#dialog').dialog('close');
+			            	$('#calendar').fullCalendar('removeEvents', taskId);
 			            }
 			       	});	
 				}
@@ -264,11 +231,10 @@
 		      <li class="active"><a href="#">MyCalendar</a></li>
 		     </ul>
 		    <ul class="nav navbar-nav navbar-right">
-		    	<li><a href="#"><span class="glyphicon glyphicon-user"></span> Name Surname </a>
+		    	<li><a href="#"><span class="active glyphicon glyphicon-user"></span> Name Surname </a>
 		      		<form role="Form" method="POST" action="<c:url value='/logout' />" accept-charset="UTF-8">
-		      			<li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
+		      			<li><button type="submit" class="btn btn-default">Logout</button></li>
 	    			</form>
-	    			
 	    		</li>
 		    </ul>
 	   
@@ -286,7 +252,7 @@
 					<div class="form-group">
 						<label for="task">Task</label> <input type="hidden"
 							class="form-control" id="id" name="id"> <input
-							type="text" class="form-control" id="task" name="name" readonly>
+							type="text" class="form-control" id="task" name="name" readonly required>
 					</div>
 					<div class="form-group">
 						<label for="description">Description</label>
@@ -295,7 +261,7 @@
 					</div>
 					<div class="form-group">
 						<label for="state">State</label> <select class="form-control"
-							size="5" id="state" name="state" readonly>
+							size="5" id="state" name="state" readonly required>
 							<option value="planned">PLANNED</option>
 							<option value="opened">OPENED</option>
 							<option value="running">RUNNING</option>
@@ -318,7 +284,7 @@
 					<div class="form-group row">
 						<div class="col-xs-6">
 							<label for="Scheduled Date">Scheduled Date</label> <input
-								id="datepicker" width="250" name="scheduledDate" readonly />
+								id="datepicker" width="250" name="scheduledDate" readonly required />
 							<script type="text/javascript">
 					       		$(function() {
 					               $("#datepicker").datepicker({ dateFormat: "yy-mm-dd" }).val()
@@ -327,7 +293,7 @@
 						</div>
 						<div class="col-xs-6">
 							<label for="Completion Date">Completion Date</label> <input
-								id="datepicker1" width="250" name="completionDate" readonly />
+								id="datepicker1" width="250" name="completionDate" readonly required />
 							<script type="text/javascript">
 					       		$(function() {
 					               $("#datepicker1").datepicker({ dateFormat: "yy-mm-dd" }).val()
@@ -337,7 +303,7 @@
 					</div>
 					<div>
 						<label for="state">Milestone</label> <select id="milestoneId" class="form-control"
-							size="5" name="milestoneId" readonly>
+							size="5" name="milestoneId" readonly >
 						</select>
 					</div>
 
