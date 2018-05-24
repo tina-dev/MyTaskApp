@@ -239,7 +239,13 @@
 									
 				$('#task_form :input').prop('readonly', false);
 					
-			}) 
+			});
+
+			$(document).on('click', '#cancel_btn', function(){
+									
+				$('#dialog').dialog('close');
+					
+			});
 		}
 		
 		
