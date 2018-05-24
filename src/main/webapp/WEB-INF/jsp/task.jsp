@@ -231,7 +231,7 @@
 		      <li class="active"><a href="#">MyCalendar</a></li>
 		     </ul>
 		    <ul class="nav navbar-nav navbar-right">
-		    	<li><a href="#"><span class="active glyphicon glyphicon-user"></span> Name Surname </a>
+		    	<li>
 		      		<form role="Form" method="POST" action="<c:url value='/logout' />" accept-charset="UTF-8">
 		      			<li><button type="submit" class="btn btn-default">Logout</button></li>
 	    			</form>
