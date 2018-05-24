@@ -217,6 +217,21 @@
 					
 				},
 				
+				/* eventRender: function(event, element, view) {
+			        element.find("#delete_btn").on('click', function() {
+			        	if (confirm("Are you sure you want to delete this task?")) {
+							
+							var taskId = $('#task_form').find('input[name="id"]').val();
+							$.ajax({
+					            type: "GET",
+					            url: "<c:url value='/task/deleteTask/"+ taskId +"' />",
+					            success: function(){ 
+						            $('#calendar').fullCalendar('removeEvents',event._id);
+					            }
+					       	});	
+						}
+		            });
+			    }, */
 				events: dataSource,			
 			});
 			
@@ -229,7 +244,8 @@
 			            type: "GET",
 			            url: "<c:url value='/task/deleteTask/"+ taskId +"' />",
 			            success: function(){ 
-			            	calendar.fullCalendar('', taskId);
+			            	$('#dialog').dialog('close');
+			            	$('#calendar').fullCalendar('removeEvents', taskId);
 			            }
 			       	});	
 				}
@@ -286,7 +302,7 @@
 					<div class="form-group">
 						<label for="task">Task</label> <input type="hidden"
 							class="form-control" id="id" name="id"> <input
-							type="text" class="form-control" id="task" name="name" readonly>
+							type="text" class="form-control" id="task" name="name" readonly required>
 					</div>
 					<div class="form-group">
 						<label for="description">Description</label>
@@ -295,7 +311,7 @@
 					</div>
 					<div class="form-group">
 						<label for="state">State</label> <select class="form-control"
-							size="5" id="state" name="state" readonly>
+							size="5" id="state" name="state" readonly required>
 							<option value="planned">PLANNED</option>
 							<option value="opened">OPENED</option>
 							<option value="running">RUNNING</option>
@@ -318,7 +334,7 @@
 					<div class="form-group row">
 						<div class="col-xs-6">
 							<label for="Scheduled Date">Scheduled Date</label> <input
-								id="datepicker" width="250" name="scheduledDate" readonly />
+								id="datepicker" width="250" name="scheduledDate" readonly required />
 							<script type="text/javascript">
 					       		$(function() {
 					               $("#datepicker").datepicker({ dateFormat: "yy-mm-dd" }).val()
@@ -327,7 +343,7 @@
 						</div>
 						<div class="col-xs-6">
 							<label for="Completion Date">Completion Date</label> <input
-								id="datepicker1" width="250" name="completionDate" readonly />
+								id="datepicker1" width="250" name="completionDate" readonly required />
 							<script type="text/javascript">
 					       		$(function() {
 					               $("#datepicker1").datepicker({ dateFormat: "yy-mm-dd" }).val()
@@ -337,7 +353,7 @@
 					</div>
 					<div>
 						<label for="state">Milestone</label> <select id="milestoneId" class="form-control"
-							size="5" name="milestoneId" readonly>
+							size="5" name="milestoneId" readonly >
 						</select>
 					</div>
 
