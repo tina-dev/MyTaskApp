@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import net.tina.MyTaskApp.entity.TaskUser;
 
+
 @Repository
 public interface TaskUserRepository extends JpaRepository<TaskUser, Integer>
 {
