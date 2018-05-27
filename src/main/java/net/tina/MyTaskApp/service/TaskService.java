@@ -26,6 +26,10 @@ public interface TaskService
 	
 	public void deleteMilestone(int id);
 	
+	public void deleteMilestonesFromTasks(int id);
+	
+	public void assignTask(int taskId, int milestoneId);
+	
 	public List<TaskUser> getAllTaskUsers();
 	
 	public TaskUser createTaskUser(TaskUser taskUser);

@@ -92,6 +92,18 @@ public class TaskServiceImpl implements TaskService
 	}
 	
 	@Override
+	public void deleteMilestonesFromTasks(int id)
+	{
+		taskRepository.deleteMilestonesFromTasks(id);
+	}
+	
+	@Override
+	public void assignTask(int taskId, int milestoneId)
+	{
+		taskRepository.assignTask(taskId, milestoneId);
+	}
+	
+	@Override
 	public List<TaskUser> getAllTaskUsers()
 	{
 		return taskUserRepository.findAll();

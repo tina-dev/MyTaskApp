@@ -38,4 +38,14 @@ public interface TaskRepository extends JpaRepository<Task, Integer>
     						@Param("parent_id") int parent_id, 
     						@Param("milestone_id") int milestone_id, 
     						@Param("created_by") int created_by);
+	
+	@Transactional
+	@Modifying(clearAutomatically = true)
+	@Query(value = "DELETE from task t WHERE t.milestone_id = :id", nativeQuery = true)
+	public void deleteMilestonesFromTasks(@Param("id") int id);
+	
+	@Transactional
+	@Modifying(clearAutomatically = true)
+	@Query(value = "UPDATE task t SET t.milestone_id = :milestone_id WHERE t.id = :id", nativeQuery = true)
+	public int assignTask(@Param("id") int id, @Param("milestone_id") int milestone_id);
 }

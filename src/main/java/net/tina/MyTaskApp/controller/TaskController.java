@@ -2,6 +2,7 @@ package net.tina.MyTaskApp.controller;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -41,23 +43,38 @@ public class TaskController
 	public String getAdminPage(Model model)
 	{
 		List<Task> allTasks = taskService.getAllTasks();
+		List<Milestone> allMilestones = taskService.getAllMilestones();
 		
+		model.addAttribute("allMilestones", allMilestones);
 		model.addAttribute("allTasks", allTasks);
 		
 		ObjectMapper mapper = new ObjectMapper();
-		String json = "";
+		String jsonTasks = "";
 		try
 		{
-			json = mapper.writeValueAsString(allTasks);
+			jsonTasks = mapper.writeValueAsString(allTasks);
 		}
 		catch (Exception e)
 		{
 			e.printStackTrace();
 		}
 		
-		model.addAttribute("tasks", json);
+		model.addAttribute("tasks", jsonTasks);
+		
+		String jsonMilestones = "";
+		try
+		{
+			jsonMilestones = mapper.writeValueAsString(allMilestones);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		
+		model.addAttribute("milestones", jsonMilestones);
 		
 		return "admin";
+		
 	}
 	
 	// Controllers for tasks ----------------------------------------------------------------------------------------------------
@@ -104,27 +121,59 @@ public class TaskController
 	// Controllers for milestones -----------------------------------------------------------------------------------------------
 	
 	@RequestMapping(value = "/admin/createMilestone", method = RequestMethod.POST)
-    public String createMilestone(@Valid @ModelAttribute("milestone") Milestone milestone, BindingResult result, ModelMap model)
-	{
+    public String createMilestone(@Valid @ModelAttribute("milestone") Milestone milestone, BindingResult result, ModelMap model, HttpServletRequest request)
+	{		
 		Milestone createdMilestone = taskService.createMilestone(milestone);
+		
+		if(createdMilestone != null)
+		{
+			try
+			{
+				String[] assignedTaskIds = request.getParameterValues("assignedTasksList[]");
+				
+				for(String assignedTaskId : assignedTaskIds)
+				{
+					taskService.assignTask(Integer.parseInt(assignedTaskId), createdMilestone.getId());
+				}
+			}
+			catch(Exception e)
+			{
+				System.out.println(e.getMessage());
+			}
+		}
 		
         return createdMilestone != null ? "redirect:/admin?success" : "redirect:/admin?error";
     }
 	
 	@RequestMapping(value = "/admin/updateMilestone", method = RequestMethod.POST)
-	public String updateMilestone(@Valid @ModelAttribute("milestone") Milestone milestone, BindingResult result, ModelMap model)
+	public String updateMilestone(@Valid @ModelAttribute("milestone") Milestone milestone, BindingResult result, ModelMap model, HttpServletRequest request)
 	{
+		try
+		{
+			taskService.deleteMilestonesFromTasks(milestone.getId());
+		}
+		catch(Exception e)
+		{
+			System.out.println(e.getMessage());
+		}
+		
 		int updateResult = taskService.updateMilestone(milestone);
+		
+		String[] assignedTaskIds = request.getParameterValues("assignedTasksList[]");
+		for(String assignedTaskId : assignedTaskIds)
+		{
+			taskService.assignTask(Integer.parseInt(assignedTaskId), milestone.getId());
+		}
 		
 		return updateResult == 1 ? "redirect:/admin?success" : "redirect:/admin?error";
     }
 	
-	@RequestMapping(value = "/admin/deleteMilestone/{id}", method = RequestMethod.POST)
-	public String deleteMilestone(@PathVariable("id") int id, ModelMap model)
+	@RequestMapping(value = "/admin/deleteMilestone", method = RequestMethod.POST)
+	public String deleteMilestone(@Valid @ModelAttribute("milestone") Milestone milestone, BindingResult result, ModelMap model)
 	{
 		try
 		{
-			taskService.deleteMilestone(id);
+			taskService.deleteMilestone(milestone.getId());
 		}
 		catch(Exception e)
 		{
