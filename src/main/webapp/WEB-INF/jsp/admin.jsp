@@ -68,17 +68,20 @@
 								    	</div>
 								  		<div class="form-group row">
 								  			<div class="col-xs-5">
-									  			<span for="ex1">Scheduled Completion</span>
-									  			<input id="scheduledDate" width="200" class="form-control" name="scheduledDate"/>
-							    				<script>
-											        
-											    </script>
+									  			<span for="ex1">Scheduled Date</span>
+									  			<input id  = "datepicker" width="200" class="form-control" name="scheduledDate"/>
+							    					<script type="text/javascript">
+					       							$(function() {
+					              					$("#datepicker").datepicker({ dateFormat: "yy-mm-dd" }).val()});
+					   								</script>
 								  			</div>
 								  			<div class="col-xs-5">
 									  			<span for="ex2">Completion Achieved</span>
-									  			<input id="completionDate" width="200" class="form-control" name="completionDate"/>
-							    				<script> 
-											    </script>
+									  			<input id="datepicker1" width="200" class="form-control" name="completionDate"/>
+							    				<script type="text/javascript">
+					       							$(function() {
+					              					$("#datepicker1").datepicker({ dateFormat: "yy-mm-dd" }).val()});
+					   								</script>
 								  			</div>
 								  		</div>
 								  		<div class="form-group">
@@ -129,15 +132,7 @@
 		var tasklist;
 		
 		$(document).ready(function()
-		{
-			$('#scheduledDate').datepicker({
-	            format: 'yyyy-mm-dd'
-	        }); 
-
-	         $('#completionDate').datepicker({
-	            format: 'yyyy-mm-dd'
-	        });
-	         
+		{	         
 			disableForm(true);
 			tasklist = ${tasks};
 			
@@ -194,8 +189,8 @@
 			document.getElementById("state").selectedIndex = "-1";
 			document.getElementById('assignedTimeBudget').value = "";
 			document.getElementById('usedTimeBudget').value = "";
-			document.getElementById('scheduledDate').value = "";
-			document.getElementById('completionDate').value = "";
+			document.getElementById('datepicker').value = "";
+			document.getElementById('datepicker1').value = "";
 			document.getElementById("milestoneId").selectedIndex = "-1";
 			document.getElementById("parentId").selectedIndex = "-1";
 		};
@@ -207,8 +202,8 @@
 			document.getElementById('state').disabled = bool;
 			document.getElementById('assignedTimeBudget').disabled = bool;
 			document.getElementById('usedTimeBudget').disabled = bool;
-			document.getElementById('scheduledDate').disabled = bool;
-			document.getElementById('completionDate').disabled = bool;
+			document.getElementById('datepicker').disabled = bool;
+			document.getElementById('datepicker1').disabled = bool;
 			document.getElementById('milestoneId').disabled = bool;
 			document.getElementById('parentId').disabled = bool;
 		};
@@ -228,7 +223,9 @@
 					document.getElementById('usedTimeBudget').value = task.usedTimeBudget;
 					document.getElementById("milestoneId").selectedIndex = task.milestoneId;
 					document.getElementById("parentId").selectedIndex = task.parentId;
-					if(task.scheduledDate){
+					document.getElementById("datepicker").value = task.scheduledDate;
+					document.getElementById("datepicker1").value = task.completionDate;
+					/*if(task.scheduledDate){
 						var scheduledDate = new Date(task.scheduledDate);
 						document.getElementById('scheduledDate').value = 
 							scheduledDate.getFullYear() + '-' + (scheduledDate.getMonth() + 1) + '-' + scheduledDate.getDate()
@@ -237,7 +234,7 @@
 						var completionDate = new Date(task.completionDate);
 						document.getElementById('completionDate').value = 
 							completionDate.getFullYear() + '-' + (completionDate.getMonth() + 1) + '-' + completionDate.getDate()
-					}
+					}*/
 				}
 			}
 		};
