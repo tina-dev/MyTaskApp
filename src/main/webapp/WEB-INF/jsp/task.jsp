@@ -233,7 +233,7 @@
 		   
 		    <ul class="nav navbar-nav navbar-right">
 		    	<li>
-		    		<form role="Form" method="POST" action="<c:url value='/admin' />" accept-charset="UTF-8">
+		    		<form role="Form" method="POST" action="<c:url value='/admin' />" modelAttribute="admin" accept-charset="UTF-8">
 		      			<li><button type="submit" class="btn btn-default">My projects</button></li>
 	    			</form>
 	    		
