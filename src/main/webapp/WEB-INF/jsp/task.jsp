@@ -230,8 +230,13 @@
 		    <ul class="nav navbar-nav">
 		      <li class="active"><a href="#">MyCalendar</a></li>
 		     </ul>
+		   
 		    <ul class="nav navbar-nav navbar-right">
 		    	<li>
+		    		<form role="Form" method="POST" action="<c:url value='/admin' />" accept-charset="UTF-8">
+		      			<li><button type="submit" class="btn btn-default">My projects</button></li>
+	    			</form>
+	    		
 		      		<form role="Form" method="POST" action="<c:url value='/logout' />" accept-charset="UTF-8">
 		      			<li><button type="submit" class="btn btn-default">Logout</button></li>
 	    			</form>
